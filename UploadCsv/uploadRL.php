@@ -2,19 +2,14 @@
 
 //connect to the database
 include ('../db/db3.php');
-//$connect = mysql_connect("localhost","root","toor");
-//mysql_select_db("TIP",$connect); //select the table
-//mysql_select_db("Tip",$connect); //select the table
 
 
 if ($_FILES[csv][size] > 0) { 
 
     //get the csv file 
     $file = $_FILES[csv][tmp_name]; 
-    $handle = fopen($file,"r"); 
-    //$delete_db = "truncate table SchoolListings";
-    //mysql_query($delete_db);
-    //
+    $handle = fopen($file,"r");
+    
     //loop through the csv file and insert into database 
     for ($lines = 0; $data = fgetcsv($handle,10000,",",'"'); $lines++) {
         if ($lines == 0) continue;//skip header line
@@ -36,14 +31,7 @@ if ($_FILES[csv][size] > 0) {
             mysqli_query($conn, $query); 
         } 
     }
-    //update Masterfile Table with matching schools depending on the group id
-    /*$updateDB = "UPDATE MasterFile
-                inner join SchoolListings on MasterFile.Groups = SchoolListings.Groups
-                SET MasterFile.GroupName = SchoolListings.GroupName
-                WHERE MasterFile.Groups = SchoolListings.Groups";
-    mysql_query($updateDB);
-     * 
-     */
+
     
     //close pop-up window
     echo "<script>window.close();</script>";
