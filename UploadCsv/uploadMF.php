@@ -1,22 +1,15 @@
-<?php 
-
-//connect to the database
-include ('../db/db.php');
-//$connect = mysql_connect("localhost","root","toor");
-//mysql_select_db("TIP",$connect); //select the table
-//mysql_select_db("Tip",$connect); //select the table
+<?php
+include ('../db/db3.php');
 
 
-if ($_FILES[csv][size] > 0) { 
+if ($_FILES[csv][size] > 0) {
 
     //get the csv file 
-    $file = $_FILES[csv][tmp_name]; 
-    
-    $handle = fopen($file,"r");
-    //$delete_db = "truncate table MasterFile";//for testing, used to empty table data
-    //mysql_query($delete_db);//for testing, used to empty table data 
-    //loop through the csv file and insert into database 
-    mysql_query("INSERT INTO 
+    $file = $_FILES[csv][tmp_name];
+
+    $handle = fopen($file, "r");
+    //archive the data set from the last month
+    mysqli_query($conn, "INSERT INTO 
                 TIP.MasterFileArchive 
                 (MemberAccount,PASBook,BR,Groups,GroupName,MemberName,LoanReference,Employer,M,DateMailed,L,IssuedDate,MaturityDate,PID,S,
                 LoanBalance,InterestBalance,RepaymentAmount,PayFrequency,DateLastPaid,PaymentNextDue,DelinquencyAge,ArrearsAge,InstallmentArrears,OPR,APV,MON,
@@ -29,55 +22,60 @@ if ($_FILES[csv][size] > 0) {
                 NetLiability,Comments,TimeOfComment,Operator 
                 from 
                 TIP.MasterFile");
-    
-    mysql_query("truncate table TIP.MasterFile");
-        for ($lines = 0; $data = fgetcsv($handle,10000,",",'"'); $lines++) {//read csv file line by line
-       if ($lines < 12) continue;//skip staring lines
-  
+
+    //delete the data set from last month to freshly insert the current month
+    mysqli_query($conn, "truncate table TIP.MasterFile");
+    for ($lines = 0; $data = fgetcsv($handle, 10000, ",", '"'); $lines++) {//read csv file line by line
+        if ($lines < 8)
+            continue; //skip staring lines
+
         if ($data[0]) {//insert data from csv file into Database
-            mysql_query("INSERT INTO TIP.MasterFile (MemberAccount,PASBook,BR,Groups,MemberName,LoanReference,Employer,M,DateMailed,L,IssuedDate,MaturityDate,PID,S,
+            $memberaccount = addslashes($data[0]);
+            $pasbook = addslashes($data[1]);
+            $br = addslashes($data[2]);
+            $groups = addslashes($data[3]);
+            $membername = addslashes($data[4]);
+            $loanref = addslashes($data[5]);
+            $employer = addslashes($data[6]);
+            $m = addslashes($data[7]);
+            $datemailed = addslashes($data[8]);
+            $l = addslashes($data[9]);
+            $issuedate = addslashes($data[10]);
+            $matdate = addslashes($data[11]);
+            $pid = addslashes($data[12]);
+            $s = addslashes($data[13]);
+            $loanbal = addslashes($data[14]);
+            $intbal = addslashes($data[15]);
+            $repamount = addslashes($data[16]);
+            $payfreq = addslashes($data[17]);
+            $datelast = addslashes($data[18]);
+            $paynextdue = addslashes($data[19]);
+            $delage = addslashes($data[20]);
+            $arrage = addslashes($data[21]);
+            $intsarr = addslashes($data[22]);
+            $opr = addslashes($data[23]);
+            $apv = addslashes($data[24]);
+            $mon = addslashes($data[25]);
+            $lastloanamount = addslashes($data[26]);
+            $date = addslashes($data[27]);
+            $rate = addslashes($data[28]);
+            $totalassets = addslashes($data[29]);
+            $allloans = addslashes($data[30]);
+            $netliability = addslashes($data[31]);
+            
+            $query = "INSERT INTO TIP.MasterFile (MemberAccount,PASBook,BR,Groups,MemberName,LoanReference,Employer,M,DateMailed,L,IssuedDate,MaturityDate,PID,S,
                 LoanBalance,InterestBalance,RepaymentAmount,PayFrequency,DateLastPaid,PaymentNextDue,DelinquencyAge,ArrearsAge,InstallmentArrears,OPR,APV,MON,
                 LastLoanAmount,Date,Rate,TotalAssets,AllLoansBalance,
                 NetLiability) VALUES 
-                (
-                '".addslashes($data[0])."', 
-                '".addslashes($data[1])."', 
-                '".addslashes($data[2])."', 
-                '".addslashes($data[3])."', 
-                '".addslashes($data[4])."', 
-                '".addslashes($data[5])."',
-                '".addslashes($data[6])."',
-                '".addslashes($data[7])."',
-                '".addslashes($data[8])."',
-                '".addslashes($data[9])."',
-                '".addslashes($data[10])."',
-                '".addslashes($data[11])."',
-                '".addslashes($data[12])."',
-                '".addslashes($data[13])."',
-                '".addslashes($data[14])."',
-                '".addslashes($data[15])."',
-                '".addslashes($data[16])."',
-                '".addslashes($data[17])."',
-                '".addslashes($data[18])."',
-                '".addslashes($data[19])."',
-                '".addslashes($data[20])."',
-                '".addslashes($data[21])."',
-                '".addslashes($data[22])."',
-                '".addslashes($data[23])."',
-                '".addslashes($data[24])."',
-                '".addslashes($data[25])."',
-                '".addslashes($data[26])."',
-                '".addslashes($data[27])."',
-                '".addslashes($data[28])."',
-                '".addslashes($data[29])."',
-                '".addslashes($data[30])."',
-                '".addslashes($data[31])."'
-            )"); 
+                ('$memberaccount','$pasbook','$br','$groups','$membername','$loanref','$employer','$m','$datemailed','$l','$issuedate','$matdate',"
+                    . "'$pid','$s','$loanbal','$intbal','$repamount','$payfreq','$datelast','$paynextdue','$delage','$arrage','$intsarr','$opr',"
+                    . "'$apv','$mon','$lastloanamount','$date','$rate','$totalassets','$allloans','$netliability')";
+            mysqli_query($conn, $query);
         }
-        
+
         //update DB MasterFile
         $cust_acc = $data[0];
-        $cust_name = $data[4];
+        $cust_name = $data[3];
         $updateDB_MF = "update TIP.MasterFile 
                     set MasterFile.Comments =
                     (select Comments 
@@ -90,17 +88,15 @@ if ($_FILES[csv][size] > 0) {
                     where 
                     MasterFile.MemberName = '$cust_name' and 
                     MasterFile.MemberAccount = '$cust_acc' order by MasterFile.id_val desc limit 1";
-        mysql_query($updateDB_MF);
-       
-        
-    } 
+        mysqli_query($conn, $updateDB_MF);
+    }
     //update DB School Listings
     $updateDB_SL = "UPDATE MasterFile
                 inner join SchoolListings on MasterFile.MemberName = SchoolListings.Contact
                 SET MasterFile.GroupName = SchoolListings.CompanyName
                 WHERE MasterFile.MemberName = SchoolListings.Contact";
-    mysql_query($updateDB_SL);
-    
+    mysqli_query($conn, $updateDB_SL);
+
     //close pop-up window
     echo "<script>window.close();</script>";
     //reload parent page after child page(pop-up window) is closed
@@ -110,26 +106,24 @@ if ($_FILES[csv][size] > 0) {
         window . opener . location . reload();
     }
     </script>";
-
 }
-
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Import MasterFile</title>
-<link href="../CSS/bootstrap.min.css" rel="stylesheet">
-</head>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>Import MasterFile</title>
+        <link href="../CSS/bootstrap.min.css" rel="stylesheet">
+    </head>
 
-<body>
-<div class = form-group>
-<form class = "form-horizontal" action="" method="post" enctype="multipart/form-data" name="form1" id="form1">
-  Choose your file: <br />
-  <input name="csv" type="file" id="csv" />
-  <input type="submit" name="Submit" value="Submit" />
-</form>
-</div>
-</body>
+    <body>
+        <div class = form-group>
+            <form class = "form-horizontal" action="" method="post" enctype="multipart/form-data" name="form1" id="form1">
+                Choose your file: <br />
+                <input name="csv" type="file" id="csv" />
+                <input type="submit" name="Submit" value="Submit" />
+            </form>
+        </div>
+    </body>
 </html> 

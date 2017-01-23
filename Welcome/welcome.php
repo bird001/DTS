@@ -1,7 +1,6 @@
 <?php
    include('../Login/session.php');
    include('../db/db2.php');
-   include('../db/db.php');
    
    //$q = $dbh -> prepare("UPDATE UserLog SET Active = NOW() WHERE Operator = '$user_check'");
    //$q -> execute(array($_SESSION['login_user']));

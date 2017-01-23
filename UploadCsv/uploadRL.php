@@ -1,7 +1,7 @@
 <?php 
 
 //connect to the database
-include ('../db/db.php');
+include ('../db/db3.php');
 //$connect = mysql_connect("localhost","root","toor");
 //mysql_select_db("TIP",$connect); //select the table
 //mysql_select_db("Tip",$connect); //select the table
@@ -21,18 +21,19 @@ if ($_FILES[csv][size] > 0) {
         //if (empty($line)) continue;//skip lines that are empty
 
         if ($data[0]) { 
-            mysql_query("INSERT INTO RecieptListings (Reciept,OPR,TransactionDate,AccountNumber,MemberName,Number,TotalValue,CheckNumber) VALUES 
-                ( 
-                '".addslashes($data[0])."', 
-                '".addslashes($data[1])."', 
-                '".addslashes($data[2])."', 
-                '".addslashes($data[3])."', 
-                '".addslashes($data[4])."', 
-                '".addslashes($data[5])."',
-                '".addslashes($data[6])."',
-                '".addslashes($data[7])."'
-                ) 
-            "); 
+            $receipt = addslashes($data[0]);
+            $operator = addslashes($data[1]);
+            $transdate = addslashes($data[2]);
+            $accnum = addslashes($data[3]);
+            $membername = addslashes($data[4]);
+            $num = addslashes($data[5]);
+            $totalval = addslashes($data[6]);
+            $checknum = addslashes($data[7]);
+            
+            $query = "INSERT INTO RecieptListings (Reciept,OPR,TransactionDate,AccountNumber,MemberName,Number,TotalValue,CheckNumber) VALUES 
+                ('$receipt','$operator','$transdate','$accnum','$membername','$num','$totalval','$checknum') 
+            ";
+            mysqli_query($conn, $query); 
         } 
     }
     //update Masterfile Table with matching schools depending on the group id
